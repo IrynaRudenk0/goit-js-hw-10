@@ -1,65 +1,29 @@
-const BASE_URL = "https://api.thecatapi.com/v1/";
+const BREEDS_URL = 'https://api.thecatapi.com/v1';
+const API_KEY =
+  'live_Cd4WCvTNS9snZjnbTUM8sxCFmhfIUvjKEyCSUDCTfMDTsKl0n9rciDP10csq9xa';
 
-export default class NewApiService {
-    constructor() {
-        this.selectQuery = '';
+function fetchBreeds() {
+  const params = new URLSearchParams({
+    api_key: API_KEY,
+  });
+  return fetch(`${BREEDS_URL}/breeds?${params}`).then(response => {
+    console.log(response);
+    if (!response.ok) {
+      throw new Error(response.status);
     }
+    return response.json();
+  });
+}
 
-    fetchBreed() {
-        const options = {
-            headers: {
-                'x-api-key': "live_Cd4WCvTNS9snZjnbTUM8sxCFmhfIUvjKEyCSUDCTfMDTsKl0n9rciDP10csq9xa",
-            },
-        };
-        const url = "`${BASE_URL}`/breeds";
-
-        fetch(url, options)
-            .then((response) => {
-                return response.json();
-            })
+function fetchCatByBreed(breedId) {
+  return fetch(
+    `${BREEDS_URL}/images/${breedId}?api_key=${API_KEY}`
+  ).then(response => {
+    if (!response.ok) {
+      throw new Error(response.status);
     }
-
-fetchCatByBreed(breedId) {
-    const breedUrl = `${BASE_URL}/images/search`;
-        
-        fetch(breedUrl, options).then((response) => {
-            alert(loadMsg);
-        return response.json();
-    }).then((data) => {
-        storedBreeds = data;
-
-        for (let i = 0; i < storedBreeds.length; i++) {
-            const breed = storedBreeds[i];
-            let option = document.createElement('option');
-            option.value = i;
-            option.innerHTML = `${breed.name}`;
-            document.getElementById('breed_selector').appendChild(option);
-    
-            showBreedImage(0)
-        }
-    })
-.catch(function(error) {
-    alert(errorMsg);
-});
-
-function showBreedImage(index)
-{ 
-  document.getElementById("breed_image").src= storedBreeds[index].image.url;
-  
-  document.getElementById("breed_json").textContent= storedBreeds[index].temperament
-  
-  
-  document.getElementById("wiki_link").href= storedBreeds[index].wikipedia_url
-  document.getElementById("wiki_link").innerHTML= storedBreeds[index].wikipedia_url
-}
+    return response.json();
+  });
 }
 
-    get query() {
-            return this.selectQuery;
-        }
-
-    set query(newQuery) {
-            this.selectQuery = newQuery;
-        }
-
-}
+export { fetchBreeds, fetchCatByBreed };
